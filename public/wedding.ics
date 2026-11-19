@@ -1,16 +1,16 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//rydeard.github.io//Save the Date//EN
+PRODID:-//rydeard.co.uk//Save the Date//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:luke-rachel-wedding-20280617@rydeard.github.io
+UID:luke-rachel-wedding-20280617@rydeard.co.uk
 DTSTAMP:20261119T000000Z
 DTSTART;VALUE=DATE:20280617
 DTEND;VALUE=DATE:20280618
 SUMMARY:Luke & Rachel's Wedding
 LOCATION:Waterton Park Hotel\, Walton Hall\, Walton\, Wakefield\, WF2 6PW
-DESCRIPTION:Save the date! Formal invitation to follow.\nhttps://rydeard.github.io/wedding
+DESCRIPTION:Save the date! Formal invitation to follow.\nhttps://rydeard.co.uk/wedding
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR

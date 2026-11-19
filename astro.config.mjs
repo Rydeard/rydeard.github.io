@@ -1,7 +1,7 @@
-// @ts-check
+﻿// @ts-check
 import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://rydeard.github.io',
+  site: 'https://rydeard.co.uk',
 });
