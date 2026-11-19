@@ -1,4 +1,4 @@
-﻿---
+---
 import { Image, getImage } from 'astro:assets';
 import hallSummer from '../assets/wedding/hall-summer.jpg';
 import hallLake from '../assets/wedding/hall-lake.jpg';
@@ -31,11 +31,11 @@ const ogUrl = Astro.site ? new URL(og.src, Astro.site).href : og.src;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Save the Date â€” Rachel & Luke</title>
+    <title>Save the Date — Rachel & Luke</title>
     <meta name="description" content={`Rachel & Luke are getting married on Saturday 17th June 2028 at ${venue}, Wakefield.`} />
     <meta name="robots" content="noindex" />
-    <meta property="og:title" content="Save the Date â€” Rachel & Luke" />
-    <meta property="og:description" content={`Saturday 17th June 2028 Â· ${venue}, Wakefield`} />
+    <meta property="og:title" content="Save the Date — Rachel & Luke" />
+    <meta property="og:description" content={`Saturday 17th June 2028 · ${venue}, Wakefield`} />
     <meta property="og:image" content={ogUrl} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -81,7 +81,7 @@ const ogUrl = Astro.site ? new URL(og.src, Astro.site).href : og.src;
         <p class="follow"><span class="script">formal invitation</span> to follow</p>
         <nav class="links">
           <a href={mapUrl} target="_blank" rel="noopener">View on map</a>
-          <span aria-hidden="true">Â·</span>
+          <span aria-hidden="true">·</span>
           <a href={`${base}wedding.ics`} download>Add to calendar</a>
         </nav>
       </section>
@@ -95,7 +95,7 @@ const ogUrl = Astro.site ? new URL(og.src, Astro.site).href : og.src;
         </svg>
       </summary>
       <p class="credit-text">
-      Photographs by{' '}<a href={credits[0].url} target="_blank" rel="noopener" title={credits[0].license}>{credits[0].author}</a>{' '}&amp;{' '}<a href={credits[1].url} target="_blank" rel="noopener" title={credits[1].license}>{credits[1].author}</a>{' '}Â· CC BY-SA via{' '}<a href={credits[2].url} target="_blank" rel="noopener" title={credits[2].license}>Wikimedia Commons</a>
+      Photographs by{' '}<a href={credits[0].url} target="_blank" rel="noopener" title={credits[0].license}>{credits[0].author}</a>{' '}&amp;{' '}<a href={credits[1].url} target="_blank" rel="noopener" title={credits[1].license}>{credits[1].author}</a>{' '}· <span class="nowrap">CC BY-SA</span> via{' '}<a href={credits[2].url} target="_blank" rel="noopener" title={credits[2].license}>Wikimedia Commons</a>
       </p>
     </details>
 
