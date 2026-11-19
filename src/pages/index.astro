@@ -95,6 +95,19 @@ const year = new Date().getFullYear();
           <a class="btn" href={site.github} target="_blank" rel="noopener">Find me on <b>GitHub</b></a>
         </div>
       </section>
+      <aside class="epilogue">
+        <p>
+          This site went down about 3 years into my time at Lifted. I didn't have time nor any reason to resurrect it
+          then, so I didn't. I'm bringing it back now, November 2026, to add a static page with a save the date for my
+          wedding. I remember building this site with love, back in 2022. It took me about a day. Claude rebuilt it in
+          57 seconds. Software Engineering has changed in ways I would have never expected. Maybe I could build a more
+          thrilling portfolio site in a single prompt... but I wouldn't change a thing.
+        </p>
+        <p class="aside">
+          Ok, well I'd probably add some cool spinning 3D models, like maybe a laptop or something, or one of those cool
+          parallax swirly backgrounds, but that's not the point.
+        </p>
+      </aside>
     </main>
 
     <footer>© {year} {site.name}</footer>
@@ -283,6 +296,17 @@ const year = new Date().getFullYear();
       .btn b { color: var(--gold-ink); }
       .btn:hover { background: var(--gold); border-color: var(--gold); color: #141414; }
       .btn:hover b { color: inherit; }
+
+      .epilogue {
+        max-width: 620px;
+        margin: 2rem auto 0;
+        padding: 2rem 0 0;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .epilogue p { margin: 0 0 0.75rem; }
+      .epilogue .aside { font-size: 0.8rem; font-style: italic; }
 
       footer { text-align: center; padding: 2rem 1rem 3rem; color: var(--muted); font-size: 0.85rem; }
 
