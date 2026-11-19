@@ -1,4 +1,4 @@
----
+﻿---
 import { Image, getImage } from 'astro:assets';
 import hallSummer from '../assets/wedding/hall-summer.jpg';
 import hallLake from '../assets/wedding/hall-lake.jpg';
@@ -31,11 +31,11 @@ const ogUrl = Astro.site ? new URL(og.src, Astro.site).href : og.src;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Save the Date — Rachel & Luke</title>
+    <title>Save the Date â€” Rachel & Luke</title>
     <meta name="description" content={`Rachel & Luke are getting married on Saturday 17th June 2028 at ${venue}, Wakefield.`} />
     <meta name="robots" content="noindex" />
-    <meta property="og:title" content="Save the Date — Rachel & Luke" />
-    <meta property="og:description" content={`Saturday 17th June 2028 · ${venue}, Wakefield`} />
+    <meta property="og:title" content="Save the Date â€” Rachel & Luke" />
+    <meta property="og:description" content={`Saturday 17th June 2028 Â· ${venue}, Wakefield`} />
     <meta property="og:image" content={ogUrl} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -81,17 +81,37 @@ const ogUrl = Astro.site ? new URL(og.src, Astro.site).href : og.src;
         <p class="follow"><span class="script">formal invitation</span> to follow</p>
         <nav class="links">
           <a href={mapUrl} target="_blank" rel="noopener">View on map</a>
-          <span aria-hidden="true">·</span>
+          <span aria-hidden="true">Â·</span>
           <a href={`${base}wedding.ics`} download>Add to calendar</a>
         </nav>
       </section>
     </main>
 
-    <footer class="credits">
-      Photographs by{' '}<a href={credits[0].url} target="_blank" rel="noopener" title={credits[0].license}>{credits[0].author}</a>{' '}&amp;{' '}<a href={credits[1].url} target="_blank" rel="noopener" title={credits[1].license}>{credits[1].author}</a>{' '}· CC BY-SA via{' '}<a href={credits[2].url} target="_blank" rel="noopener" title={credits[2].license}>Wikimedia Commons</a>
-    </footer>
+    <details class="credits">
+      <summary aria-label="Photo credits">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+          <circle cx="12" cy="13" r="3.5" />
+        </svg>
+      </summary>
+      <p class="credit-text">
+      Photographs by{' '}<a href={credits[0].url} target="_blank" rel="noopener" title={credits[0].license}>{credits[0].author}</a>{' '}&amp;{' '}<a href={credits[1].url} target="_blank" rel="noopener" title={credits[1].license}>{credits[1].author}</a>{' '}Â· CC BY-SA via{' '}<a href={credits[2].url} target="_blank" rel="noopener" title={credits[2].license}>Wikimedia Commons</a>
+      </p>
+    </details>
 
     <script>
+      // Photo credits: open on hover with a mouse, tap to toggle on touch; close when tapping elsewhere.
+      const credits = document.querySelector<HTMLDetailsElement>('.credits');
+      if (credits) {
+        if (matchMedia('(hover: hover)').matches) {
+          credits.addEventListener('mouseenter', () => (credits.open = true));
+          credits.addEventListener('mouseleave', () => (credits.open = false));
+        }
+        document.addEventListener('click', (e) => {
+          if (credits.open && !credits.contains(e.target as Node)) credits.open = false;
+        });
+      }
+
       // Slow crossfade between venue photographs.
       const slides = [...document.querySelectorAll<HTMLElement>('.slide')];
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -220,19 +240,48 @@ const ogUrl = Astro.site ? new URL(og.src, Astro.site).href : og.src;
 
       .credits {
         position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 0.5rem 1rem max(0.6rem, env(safe-area-inset-bottom));
-        text-align: center;
-        font-size: 0.78rem;
-        font-style: italic;
-        color: rgba(251, 246, 238, 0.6);
+        right: max(14px, env(safe-area-inset-right));
+        bottom: max(14px, env(safe-area-inset-bottom));
+        z-index: 5;
       }
-      .credits a { color: inherit; text-decoration: none; }
-      .credits a:hover { text-decoration: underline; }
-
-      @media (max-width: 480px) { .stage { padding-bottom: max(4rem, calc(env(safe-area-inset-bottom) + 3.25rem)); } }
+      .credits summary {
+        list-style: none;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        color: rgba(251, 246, 238, 0.8);
+        background: rgba(20, 16, 12, 0.35);
+        border: 1px solid rgba(251, 246, 238, 0.3);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition: color 0.2s, background 0.2s;
+      }
+      .credits summary::-webkit-details-marker { display: none; }
+      .credits summary:hover, .credits[open] summary { color: var(--ivory); background: rgba(20, 16, 12, 0.55); }
+      .credit-text {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 8px);
+        width: max-content;
+        max-width: min(320px, calc(100vw - 28px));
+        margin: 0;
+        padding: 0.55rem 0.85rem;
+        font-size: 0.85rem;
+        font-style: italic;
+        line-height: 1.4;
+        text-align: right;
+        text-shadow: none;
+        color: var(--ivory);
+        background: rgba(20, 16, 12, 0.7);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-radius: 8px;
+      }
+      .credits a { color: inherit; text-decoration: underline; text-decoration-color: rgba(251, 246, 238, 0.4); text-underline-offset: 2px; }
+      .credits a:hover { text-decoration-color: var(--ivory); }
 
       @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
       @media (prefers-reduced-motion: reduce) {
