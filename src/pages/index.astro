@@ -1,0 +1,295 @@
+---
+import { site, about, skillGroups, projects } from '../data/site';
+
+const icons = import.meta.glob<string>('../icons/*.svg', { query: '?raw', import: 'default', eager: true });
+const icon = (name: string) => icons[`../icons/${name}.svg`] ?? '';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const year = new Date().getFullYear();
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{site.name} — {site.role}</title>
+    <meta name="description" content={`${site.name}, ${site.role} based in ${site.location}.`} />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <img class="coffee" src={`${base}images/coffee-stain.png`} alt="" aria-hidden="true" draggable="false" />
+
+    <nav class="nav">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <main>
+      <section class="hero">
+        <p class="kicker">Hi, my name is</p>
+        <h1 class="title"><span data-type={site.name}>{site.name}</span></h1>
+        <p class="kicker">I am a</p>
+        <p class="subtitle mono"><span data-type={site.role} data-delay="1400">{site.role}</span></p>
+        <a class="cta" href="#contact">Get in touch <span aria-hidden="true">→</span></a>
+      </section>
+
+      <section id="about" class="section">
+        <h2>About me</h2>
+        <div class="about">
+          <img class="avatar" src={`${base}images/profile-pic-400x400.png`} alt={`Photo of ${site.name}`} width="200" height="200" />
+          <div>
+            <p>
+              My name is Luke
+              <span class="tip" tabindex="0">Rydeard<span role="tooltip">Pronounced “Rid-e-ard” — don't worry, no one gets it right.</span></span>.
+            </p>
+            {about.map((p) => <p>{p}</p>)}
+          </div>
+        </div>
+      </section>
+
+      <section id="skills" class="section">
+        <h2>Skills</h2>
+        {skillGroups.map((g) => (
+          <div class="group">
+            <h3>{g.title}</h3>
+            <ul class="skills">
+              {g.items.map((s) => (
+                <li>
+                  <span class="logo" set:html={icon(s.icon)} />
+                  {s.name}
+                </li>
+              ))}
+            </ul>
+            {g.note && <p class="note">({g.note})</p>}
+          </div>
+        ))}
+      </section>
+
+      <section id="projects" class="section">
+        <h2>Projects</h2>
+        <div class="projects">
+          {projects.map((p) => (
+            <article class="card">
+              <h3>{p.url ? <a href={p.url} target="_blank" rel="noopener">{p.title} ↗</a> : p.title}</h3>
+              <p>{p.description}</p>
+              {p.tags && <ul class="tags">{p.tags.map((t) => <li>{t}</li>)}</ul>}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="contact" class="section contact">
+        <h2>Get in touch</h2>
+        <div class="buttons">
+          <a class="btn" href={`${base}${site.cv}`} target="_blank">Check out my <b>CV</b></a>
+          <a class="btn" href={`mailto:${site.email}`}>Drop me an <b>email</b></a>
+          <a class="btn" href={site.github} target="_blank" rel="noopener">Find me on <b>GitHub</b></a>
+        </div>
+      </section>
+    </main>
+
+    <footer>© {year} {site.name}</footer>
+
+    <script>
+      // Typewriter effect; text is already in the HTML, so it works without JS.
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce) {
+        document.querySelectorAll<HTMLElement>('[data-type]').forEach((el) => {
+          const text = el.dataset.type ?? '';
+          const delay = Number(el.dataset.delay ?? 0);
+          el.style.minHeight = `${el.offsetHeight}px`;
+          el.textContent = '';
+          el.classList.add('typing');
+          setTimeout(() => {
+            let i = 0;
+            const tick = () => {
+              el.textContent = text.slice(0, ++i);
+              if (i < text.length) setTimeout(tick, 55 + Math.random() * 50);
+            };
+            tick();
+          }, delay);
+        });
+      }
+    </script>
+
+    <style is:global>
+      :root {
+        --gold: rgb(255, 195, 0);
+        --gold-ink: rgb(170, 125, 0);
+        --bg: #fbfaf7;
+        --text: #141414;
+        --muted: #5c5c5c;
+        --card: rgba(255, 255, 255, 0.8);
+        --line: rgba(0, 0, 0, 0.1);
+        --dot: rgba(0, 0, 0, 0.12);
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --gold-ink: var(--gold);
+          --bg: #121212;
+          --text: #ececec;
+          --muted: #a3a3a3;
+          --card: rgba(30, 30, 30, 0.85);
+          --line: rgba(255, 255, 255, 0.12);
+          --dot: rgba(255, 255, 255, 0.08);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, sans-serif;
+        color: var(--text);
+        background-color: var(--bg);
+        background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+        background-size: 28px 28px;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+      a { color: inherit; }
+      .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+      .coffee {
+        position: absolute;
+        top: -60px;
+        right: -80px;
+        width: min(480px, 70vw);
+        opacity: 0.55;
+        pointer-events: none;
+        user-select: none;
+        z-index: -1;
+      }
+      @media (prefers-color-scheme: dark) { .coffee { opacity: 0.2; } }
+
+      .nav {
+        position: sticky;
+        top: 1rem;
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        gap: clamp(0.75rem, 4vw, 2.5rem);
+        width: fit-content;
+        margin: 1rem auto 0;
+        padding: 0.6rem 1.5rem;
+        background: var(--card);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+      }
+      .nav a { text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+      .nav a:hover { color: var(--gold-ink); }
+
+      main { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
+
+      .hero {
+        min-height: calc(100svh - 5rem);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .kicker { margin: 0; color: var(--muted); font-weight: 300; font-size: 1.25rem; }
+      .title { margin: 0 0 1.5rem; font-size: clamp(2.75rem, 10vw, 6rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; }
+      .subtitle { margin: 0 0 2.5rem; font-size: clamp(1.1rem, 3.5vw, 1.75rem); }
+      .typing::after { content: '▌'; color: var(--gold); animation: blink 1s steps(1) infinite; margin-left: 2px; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .cta {
+        align-self: flex-start;
+        font-weight: 600;
+        font-size: 1.15rem;
+        text-decoration: none;
+        border-bottom: 3px solid var(--gold);
+        padding-bottom: 2px;
+      }
+      .cta span { display: inline-block; transition: transform 0.2s; }
+      .cta:hover span { transform: translateX(6px); }
+
+      .section { padding: 5rem 0; }
+      h2 { font-size: clamp(2rem, 6vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin: 0 0 2rem; }
+      h2::after { content: ''; display: block; width: 3rem; height: 4px; background: var(--gold); margin-top: 0.5rem; border-radius: 2px; }
+      h3 { font-size: 1.15rem; margin: 0 0 1rem; }
+
+      .about { display: grid; grid-template-columns: auto 1fr; gap: 2.5rem; align-items: center; font-size: 1.1rem; }
+      .about p { margin: 0 0 1rem; }
+      .avatar { border-radius: 50%; border: 4px solid var(--gold); width: 200px; height: 200px; object-fit: cover; }
+      @media (max-width: 640px) { .about { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+
+      .tip { position: relative; border-bottom: 2px dotted var(--gold); cursor: help; }
+      .tip [role='tooltip'] {
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        translate: -50% 0;
+        width: max-content;
+        max-width: 240px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        background: var(--text);
+        color: var(--bg);
+        border-radius: 8px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s;
+      }
+      .tip:hover [role='tooltip'], .tip:focus [role='tooltip'] { opacity: 1; }
+
+      .group { margin-bottom: 2.5rem; }
+      .skills { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.75rem; }
+      .skills li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 0.5rem;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: transform 0.15s, border-color 0.15s;
+      }
+      .skills li:hover { transform: translateY(-3px); border-color: var(--gold); }
+      .logo svg { width: 44px; height: 44px; display: block; }
+      .note { color: var(--muted); font-weight: 300; margin: 0.75rem 0 0; }
+
+      .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+      .card { padding: 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+      .card h3 a { text-decoration: none; }
+      .card h3 a:hover { color: var(--gold-ink); }
+      .card p { margin: 0 0 1rem; color: var(--muted); }
+      .tags { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+      .tags li { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.6rem; border-radius: 999px; background: color-mix(in srgb, var(--gold) 25%, transparent); }
+
+      .contact { text-align: center; }
+      .contact h2::after { margin-inline: auto; }
+      .buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+      .btn {
+        text-decoration: none;
+        padding: 0.9rem 1.6rem;
+        border-radius: 999px;
+        border: 2px solid var(--text);
+        font-weight: 400;
+        transition: background 0.15s, color 0.15s, border-color 0.15s;
+      }
+      .btn b { color: var(--gold-ink); }
+      .btn:hover { background: var(--gold); border-color: var(--gold); color: #141414; }
+      .btn:hover b { color: inherit; }
+
+      footer { text-align: center; padding: 2rem 1rem 3rem; color: var(--muted); font-size: 0.85rem; }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        * { transition: none !important; animation: none !important; }
+      }
+    </style>
+  </body>
+</html>
