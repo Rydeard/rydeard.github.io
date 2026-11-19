@@ -1,0 +1,247 @@
+---
+import { Image, getImage } from 'astro:assets';
+import hallSummer from '../assets/wedding/hall-summer.jpg';
+import hallLake from '../assets/wedding/hall-lake.jpg';
+import bridgeFountain from '../assets/wedding/bridge-fountain.jpg';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+
+const couple = 'Luke & Rachel';
+const dateLong = 'Saturday 17th June 2028';
+const venue = 'Waterton Park Hotel';
+const address = 'Walton Hall, Walton, Wakefield, WF2 6PW';
+const mapUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(`${venue}, ${address}`);
+
+// Freely licensed photos from Wikimedia Commons (attribution required).
+const slides = [
+  { src: hallSummer, alt: 'Walton Hall on its island, with the iron footbridge across the lake in summer', pos: '48% 50%' },
+  { src: hallLake, alt: 'Walton Hall seen across the lake', pos: '55% 50%' },
+  { src: bridgeFountain, alt: 'The iron footbridge and fountain on the lake at Walton Hall', pos: '40% 50%' },
+];
+const credits = [
+  { author: 'Dave.Dunford', url: 'https://commons.wikimedia.org/wiki/File:Bridge_and_medieval_gateway_at_Walton_Hall.jpg', license: 'CC BY-SA 4.0' },
+  { author: 'Gordon Hatton', url: 'https://commons.wikimedia.org/wiki/File:Walton_Hall_from_Lake.jpg', license: 'CC BY-SA 2.0' },
+  { author: 'Gordon Hatton', url: 'https://commons.wikimedia.org/wiki/File:Bridge_at_Walton_Hall_-_geograph.org.uk_-_6374608.jpg', license: 'CC BY-SA 2.0' },
+];
+
+const og = await getImage({ src: hallSummer, width: 1200, format: 'jpg' });
+const ogUrl = Astro.site ? new URL(og.src, Astro.site).href : og.src;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Save the Date — {couple}</title>
+    <meta name="description" content={`${couple} are getting married on ${dateLong} at ${venue}, Wakefield.`} />
+    <meta name="robots" content="noindex" />
+    <meta property="og:title" content={`Save the Date — ${couple}`} />
+    <meta property="og:description" content={`${dateLong} · ${venue}, Wakefield`} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="slides" aria-hidden="false">
+      {slides.map((s, i) => (
+        <Image
+          src={s.src}
+          alt={s.alt}
+          widths={[640, 1024, 1600, 2000]}
+          sizes="100vw"
+          loading={i === 0 ? 'eager' : 'lazy'}
+          fetchpriority={i === 0 ? 'high' : 'auto'}
+          class:list={['slide', { active: i === 0 }]}
+          style={`object-position: ${s.pos}`}
+        />
+      ))}
+    </div>
+    <div class="shade" aria-hidden="true"></div>
+
+    <main class="card">
+      <p class="kicker">Save the date</p>
+      <h1 class="title"><span data-type={couple}>{couple}</span></h1>
+      <p class="kicker">are getting married</p>
+      <p class="date mono">
+        <time datetime="2028-06-17"><span data-type={dateLong} data-delay="1300">{dateLong}</span></time>
+      </p>
+      <div class="venue">
+        <p class="venue-name">{venue}</p>
+        <p class="venue-address">Walton Hall, Walton, Wakefield, <span class="nowrap">WF2 6PW</span></p>
+      </div>
+      <div class="actions">
+        <a class="cta" href={mapUrl} target="_blank" rel="noopener">View on map <span aria-hidden="true">→</span></a>
+        <a class="cta" href={`${base}wedding.ics`} download>Add to calendar <span aria-hidden="true">→</span></a>
+      </div>
+      <p class="later">Formal invitation to follow</p>
+    </main>
+
+    <footer class="credits">
+      Photos:{' '}
+      {credits.map((c, i) => (
+        <>
+          <a href={c.url} target="_blank" rel="noopener">{c.author}</a>{' '}({c.license}){i < credits.length - 1 ? ', ' : ''}
+        </>
+      ))}
+      {' '}via Wikimedia Commons
+    </footer>
+
+    <script>
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Typewriter (text is already in the HTML, so it works without JS).
+      if (!reduce) {
+        document.querySelectorAll<HTMLElement>('[data-type]').forEach((el) => {
+          const text = el.dataset.type ?? '';
+          const delay = Number(el.dataset.delay ?? 0);
+          el.style.minHeight = `${el.offsetHeight}px`;
+          el.textContent = '';
+          el.classList.add('typing');
+          setTimeout(() => {
+            let i = 0;
+            const tick = () => {
+              el.textContent = text.slice(0, ++i);
+              if (i < text.length) setTimeout(tick, 60 + Math.random() * 50);
+              else setTimeout(() => el.classList.remove('typing'), 2500);
+            };
+            tick();
+          }, delay);
+        });
+      }
+
+      // Slow crossfade between venue photos.
+      const slides = [...document.querySelectorAll<HTMLElement>('.slide')];
+      if (!reduce && slides.length > 1) {
+        let current = 0;
+        setInterval(() => {
+          slides[current].classList.remove('active');
+          current = (current + 1) % slides.length;
+          slides[current].classList.add('active');
+        }, 7000);
+      }
+    </script>
+
+    <style is:global>
+      :root {
+        --gold: rgb(255, 195, 0);
+        --gold-ink: rgb(170, 125, 0);
+        --text: #141414;
+        --muted: #5c5c5c;
+        --card: rgba(251, 250, 247, 0.88);
+        --line: rgba(0, 0, 0, 0.1);
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --gold-ink: var(--gold);
+          --text: #ececec;
+          --muted: #b0b0b0;
+          --card: rgba(22, 22, 22, 0.84);
+          --line: rgba(255, 255, 255, 0.14);
+        }
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        padding: max(1rem, env(safe-area-inset-top)) 1rem max(3rem, env(safe-area-inset-bottom));
+        font-family: Inter, system-ui, sans-serif;
+        color: var(--text);
+        background: #141414;
+        line-height: 1.5;
+        overflow-x: hidden;
+      }
+      .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+      .slides, .shade { position: fixed; inset: 0; }
+      .slide {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transform: scale(1.06);
+        transition: opacity 2s ease, transform 9s ease-out;
+      }
+      .slide.active { opacity: 1; transform: scale(1); }
+      .shade { background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.45)); }
+
+      .card {
+        position: relative;
+        width: min(560px, 100%);
+        padding: clamp(1.75rem, 6vw, 3rem) clamp(1.25rem, 6vw, 3rem);
+        text-align: center;
+        background: var(--card);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: rise 0.9s ease both;
+      }
+      @keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+
+      .kicker { margin: 0; color: var(--muted); font-weight: 300; font-size: clamp(1rem, 3.5vw, 1.2rem); }
+      .card > .kicker:first-child { text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; font-weight: 600; color: var(--gold-ink); margin-bottom: 0.5rem; }
+      .title {
+        margin: 0.25rem 0 0.5rem;
+        font-size: clamp(2.5rem, 11vw, 4.5rem);
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+      .date { margin: 1.5rem 0 0; font-size: clamp(1.05rem, 4vw, 1.4rem); }
+      .date::after { content: ''; display: block; width: 3rem; height: 4px; background: var(--gold); margin: 1.25rem auto 0; border-radius: 2px; }
+      .typing::after { content: '▌'; color: var(--gold); animation: blink 1s steps(1) infinite; margin-left: 2px; }
+      @keyframes blink { 50% { opacity: 0; } }
+
+      .venue { margin: 1.25rem 0 1.75rem; }
+      .venue p { margin: 0; }
+      .venue-name { font-weight: 600; font-size: clamp(1.15rem, 4.5vw, 1.4rem); }
+      .venue-address { color: var(--muted); font-size: 0.95rem; }
+
+      .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem 1.75rem; }
+      .cta {
+        color: inherit;
+        font-weight: 600;
+        text-decoration: none;
+        border-bottom: 3px solid var(--gold);
+        padding-bottom: 2px;
+      }
+      .cta span { display: inline-block; transition: transform 0.2s; }
+      .cta:hover span { transform: translateX(5px); }
+      .nowrap { white-space: nowrap; }
+      @media (max-width: 400px) { body { padding-bottom: 5rem; } }
+      .later { margin: 1.75rem 0 0; font-size: 0.85rem; font-style: italic; color: var(--muted); }
+
+      .credits {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0.5rem 1rem max(0.5rem, env(safe-area-inset-bottom));
+        text-align: center;
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.75);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+      }
+      .credits a { color: inherit; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .slide, .card, .cta span { transition: none; animation: none; transform: none; }
+      }
+    </style>
+  </body>
+</html>
