@@ -1,8 +1,14 @@
 ---
-import { site, about, skillGroups, projects } from '../data/site';
+import { site, about, experience, skillGroups, projects } from '../data/site';
 
 const icons = import.meta.glob<string>('../icons/*.svg', { query: '?raw', import: 'default', eager: true });
-const icon = (name: string) => (icons[`../icons/${name}.svg`] ?? '').replace(/<\?xml[^>]*\?>\s*/, '');
+// Strip XML declarations and namespace ids so gradients in different inlined SVGs don't collide.
+const icon = (name: string) =>
+  (icons[`../icons/${name}.svg`] ?? '')
+    .replace(/<\?xml[^>]*\?>\s*/, '')
+    .replace(/\bid="([^"]+)"/g, `id="${name}-$1"`)
+    .replace(/url\(#([^)]+)\)/g, `url(#${name}-$1)`)
+    .replace(/href="#([^"]+)"/g, `href="#${name}-$1"`);
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const year = new Date().getFullYear();
@@ -28,6 +34,7 @@ const year = new Date().getFullYear();
 
     <nav class="nav">
       <a href="#about">About</a>
+      <a href="#experience">Experience</a>
       <a href="#skills">Skills</a>
       <a href="#projects">Projects</a>
       <a href="#contact">Contact</a>
@@ -53,6 +60,28 @@ const year = new Date().getFullYear();
             {about.map((p) => <p>{p}</p>)}
           </div>
         </div>
+      </section>
+
+      <section id="experience" class="section">
+        <h2>Experience</h2>
+        <ol class="jobs">
+          {experience.map((job) => (
+            <li class="job">
+              <header class="job-head">
+                <h3>{job.url ? <a href={job.url} target="_blank" rel="noopener">{job.company} ↗</a> : job.company}</h3>
+                <span class="period mono">{job.period}</span>
+              </header>
+              {job.blurb && <p class="blurb">{job.blurb}</p>}
+              <ol class="roles">
+                {job.roles.map((r) => (
+                  <li><b>{r.title}</b>{' '}<span class="period mono">{r.period}</span></li>
+                ))}
+              </ol>
+              {job.description.map((p) => <p>{p}</p>)}
+              {job.tags && <ul class="tags">{job.tags.map((t) => <li>{t}</li>)}</ul>}
+            </li>
+          ))}
+        </ol>
       </section>
 
       <section id="skills" class="section">
@@ -258,6 +287,20 @@ const year = new Date().getFullYear();
         transition: opacity 0.15s;
       }
       .tip:hover::after, .tip:focus::after { opacity: 1; }
+
+      .jobs { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.25rem; }
+      .job { padding: 1.5rem; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--gold); border-radius: 12px; }
+      .job-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.25rem 1rem; }
+      .job-head h3 { margin: 0; font-size: 1.35rem; }
+      .job-head a { text-decoration: none; }
+      .job-head a:hover { color: var(--gold-ink); }
+      .period { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+      .blurb { margin: 0.15rem 0 0; color: var(--muted); font-size: 0.95rem; }
+      .roles { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 0.3rem; }
+      .roles li { position: relative; padding-left: 1.1rem; }
+      .roles li::before { content: ''; position: absolute; left: 0; top: 0.6em; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+      .roles li:not(:first-child)::before { background: transparent; border: 2px solid var(--gold); box-sizing: border-box; }
+      .job > p { margin: 0 0 1rem; }
 
       .group { margin-bottom: 2.5rem; }
       .skills { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.75rem; }
