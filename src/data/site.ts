@@ -12,7 +12,7 @@ export const site = {
 
 // TODO: refresh — this copy is from 2022.
 export const about = [
-  "I'm a computer nerd living in Wakefield, England.I'm primarily a programmer, but I also have a love for eye-catching yet simple designs.",
+  "I'm a computer nerd living in Wakefield, England. I'm primarily a programmer, but I also have a love for eye-catching yet simple designs.",
   'I studied MEng Computer Science at the University of York and have experience creating websites, mobile apps, and APIs.',
 ];
 
